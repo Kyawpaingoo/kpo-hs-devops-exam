@@ -28,25 +28,41 @@ pipeline{
         //         }
         //     }
         // }
-        stage ('Build and Push Docker Image') {
+        stage ('Build Docker Image') {
             steps {
                 sh "docker build . --tag ttl.sh/my-app:v1"
+            }
+        }
+        stage ('Push Docker Image') {
+            steps {
                 sh "docker push ttl.sh/my-app:v1"
             }
         }
-        stage("Docker Run Image") {
+        // stage("Docker Run Image") {
+        //     steps {
+        //         withCredentials([sshUserPrivateKey(credentialsId: 'mykey', keyFileVariable: 'FILENAME', usernameVariable: 'USERNAME')]) {
+        //             // 1. Force remove the old container
+        //             sh 'ssh -o StrictHostKeyChecking=no -i ${FILENAME} ${USERNAME}@docker "docker rm -f my-app || true"'
+                    
+        //             // 2. FIX: Pull the FULL image name from ttl.sh
+        //             sh 'ssh -o StrictHostKeyChecking=no -i ${FILENAME} ${USERNAME}@docker "docker pull ttl.sh/my-app:v1"'
+                    
+        //             // 3. FIX: Run using the FULL image name
+        //             sh 'ssh -o StrictHostKeyChecking=no -i ${FILENAME} ${USERNAME}@docker "docker run -d --name my-app -p 4444:4444 ttl.sh/my-app:v1"'
+        //         }
+        //     }
+        // }
+        stage("Deploy to Kubernetes"){
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'mykey', keyFileVariable: 'FILENAME', usernameVariable: 'USERNAME')]) {
-                    // 1. Force remove the old container
-                    sh 'ssh -o StrictHostKeyChecking=no -i ${FILENAME} ${USERNAME}@docker "docker rm -f my-app || true"'
-                    
-                    // 2. FIX: Pull the FULL image name from ttl.sh
-                    sh 'ssh -o StrictHostKeyChecking=no -i ${FILENAME} ${USERNAME}@docker "docker pull ttl.sh/my-app:v1"'
-                    
-                    // 3. FIX: Run using the FULL image name
-                    sh 'ssh -o StrictHostKeyChecking=no -i ${FILENAME} ${USERNAME}@docker "docker run -d --name my-app -p 4444:4444 ttl.sh/my-app:v1"'
+                withKubeConfig([credentialsId: 'mykey', serverUrl: 'https://kubernetes:6443']) {
+                  sh 'kubectl apply -f deployment.yaml'
+                  sh 'kubectl apply -f service.yaml'
+                //production
+                  // sh 'kubectl apply -f deployment.yaml --namespace production'
+                  // sh 'kubectl apply -f service.yaml --namespace production'
                 }
             }
         }
+
     }
 }

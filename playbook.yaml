@@ -2,7 +2,7 @@
 - hosts: all
   vars:
     app_path: "/home/laborant/app"
-    service_name: "myapp.service"
+    service_name: "app.service"
 
   tasks:
     - name: Copy the Node.js application 

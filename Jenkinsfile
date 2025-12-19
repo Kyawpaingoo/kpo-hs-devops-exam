@@ -44,7 +44,7 @@ pipeline{
                     sh 'ssh -o StrictHostKeyChecking=no -i ${FILENAME} ${USERNAME}@docker "docker pull ttl.sh/my-app:v1"'
                     
                     // 3. FIX: Run using the FULL image name
-                    sh 'ssh -o StrictHostKeyChecking=no -i ${FILENAME} ${USERNAME}@docker "docker run -d --name my-app -p 3000:3000 ttl.sh/my-app:v1"'
+                    sh 'ssh -o StrictHostKeyChecking=no -i ${FILENAME} ${USERNAME}@docker "docker run -d --name my-app -p 4444:4444 ttl.sh/my-app:v1"'
                 }
             }
         }

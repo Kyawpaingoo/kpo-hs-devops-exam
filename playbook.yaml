@@ -9,12 +9,14 @@
       ansible.builtin.copy:
         src: ./             
         dest: "{{ app_path }}"
+        
 
     - name: Create the unit file
       become: True
       ansible.builtin.copy:
         src: "{{ service_name }}"
         dest: "/etc/systemd/system/{{ service_name }}"
+        mode: "0644"
 
     - name: Start and enable the Node.js service
       become: True

@@ -1,0 +1,30 @@
+pipeline{
+    agent any
+    tools{
+        nodejs "nodejs24"
+    }
+    stages{
+        stage('Install Dependencies'){
+            steps{
+                sh 'npm install'
+            }
+        }
+        stage('Run Tests'){
+            steps{
+                sh 'npm run test'
+            }
+        }
+        stage('Build Project'){
+            steps{
+                sh 'npm run build'
+            }
+        }
+        stage('Deploy Application'){
+            steps{
+                sh 'echo Deploying application...'
+                sh 'ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --inventory hosts.ini --key-file ${FILENAME} playbook.yaml'
+                sh 'echo Deployment complete.'
+            }
+        }
+    }
+}

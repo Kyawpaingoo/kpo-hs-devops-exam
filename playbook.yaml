@@ -1,0 +1,31 @@
+---
+- hosts: all
+  vars:
+    app_path: "/home/laborant/app"
+    service_name: "myapp.service"
+
+  tasks:
+    - name: Copy the Node.js application 
+      ansible.builtin.copy:
+        src: ./             
+        dest: "{{ app_path }}"
+        owner: laborant
+        group: laborant
+        mode: '0644'
+
+    - name: Create the unit file
+      become: True
+      ansible.builtin.copy:
+        src: "{{ service_name }}"
+        dest: "/etc/systemd/system/{{ service_name }}"
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Start and enable the Node.js service
+      become: True
+      ansible.builtin.systemd:
+        name: "{{ service_name }}"
+        daemon_reload: true
+        enabled: yes
+        state: restarted

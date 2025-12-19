@@ -1,0 +1,9 @@
+[Unit]
+Description=Node.js Application
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node /home/laborant/app/index.js
+
+[Install]
+WantedBy=multi-user.target

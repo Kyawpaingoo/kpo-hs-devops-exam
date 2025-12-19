@@ -9,14 +9,22 @@
       ansible.builtin.copy:
         src: ./             
         dest: "{{ app_path }}"
-        
+        mode: preserve
+      loop:
+        - index.js
+        - package.json
+        - package-lock.json
+
+    - name: Make index.js executable
+      file:
+        path: /home/laborant/app/index.js
+        mode: '0755'
 
     - name: Create the unit file
       become: True
       ansible.builtin.copy:
         src: "{{ service_name }}"
         dest: "/etc/systemd/system/{{ service_name }}"
-        mode: "0644"
 
     - name: Start and enable the Node.js service
       become: True

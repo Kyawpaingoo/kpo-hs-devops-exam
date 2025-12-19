@@ -9,11 +9,6 @@
       ansible.builtin.copy:
         src: ./             
         dest: "{{ app_path }}"
-        mode: preserve
-      loop:
-        - index.js
-        - package.json
-        - package-lock.json
 
     - name: Make index.js executable
       file:

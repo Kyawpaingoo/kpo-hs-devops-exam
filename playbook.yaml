@@ -5,10 +5,18 @@
     service_name: "app.service"
 
   tasks:
-    - name: Copy the Node.js application 
+    - name: Copy Node.js Application
       ansible.builtin.copy:
-        src: ./             
-        dest: "{{ app_path }}"
+        src: "{{ item }}"
+        dest: "{{ app_path }}/"
+      loop:
+        - "index.js"
+        - "package.json"
+        - "package-lock.json"
+
+    - name: Install dependencies on server
+      ansible.builtin.npm:
+        path: "{{ app_path }}"
 
     - name: Make index.js executable
       file:

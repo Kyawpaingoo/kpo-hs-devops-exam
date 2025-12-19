@@ -16,9 +16,11 @@ pipeline{
         }
         stage('Deploy Application'){
             steps{
-                sh 'echo Deploying application...'
-                sh 'ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --inventory hosts.ini --key-file ${FILENAME} playbook.yaml'
-                sh 'echo Deployment complete.'
+                withCredentials([sshUserPrivateKey(credentialsId: 'mykey', keyFileVariable: 'FILENAME', usernameVariable: 'USERNAME')]) {
+                    sh 'echo Deploying application...'
+                    sh 'ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --inventory hosts.ini --key-file ${FILENAME} playbook.yaml'
+                    sh 'echo Deployment complete.'
+                }
             }
         }
     }

@@ -5,6 +5,12 @@
     service_name: "app.service"
 
   tasks:
+    - name: Install Node.js and npm on target server
+        ansible.builtin.package:
+          name:
+            - nodejs
+            - npm
+          state: present
     - name: Copy Node.js Application
       ansible.builtin.copy:
         src: "{{ item }}"

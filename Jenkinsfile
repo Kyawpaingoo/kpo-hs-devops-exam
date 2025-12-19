@@ -30,8 +30,8 @@ pipeline{
         // }
         stage ('Build and Push Docker Image') {
             steps {
-                sh "docker build . --tag my-app:v1"
-                sh "docker push my-app:v1"
+                sh "docker build . --tag ttl.sh/my-app:v1"
+                sh "docker push ttl.sh/my-app:v1"
             }
         }
         stage("Docker Run Image") {
@@ -44,7 +44,7 @@ pipeline{
                     sh 'ssh -o StrictHostKeyChecking=no -i ${FILENAME} ${USERNAME}@docker "docker pull my-app:v1"'
                     
                     // 3. Run with the --name flag so we can stop it next time
-                    sh 'ssh -o StrictHostKeyChecking=no -i ${FILENAME} ${USERNAME}@docker "docker run -d --name my-app -p 3000:3000 my-app:v1"'
+                    sh 'ssh -i ${FILENAME} -o StrictHostKeyChecking=no ${USERNAME}@docker "docker pull ttl.sh/my-app:v1 && docker run -d --restart always -p 3000:3000 --name my-app ttl.sh/myapp:v1"'
                 }
             }
         }

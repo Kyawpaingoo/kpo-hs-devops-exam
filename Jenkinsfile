@@ -37,14 +37,14 @@ pipeline{
         stage("Docker Run Image") {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'mykey', keyFileVariable: 'FILENAME', usernameVariable: 'USERNAME')]) {
-                    // 1. Force remove the old container using the specific name 'my-app'
+                    // 1. Force remove the old container
                     sh 'ssh -o StrictHostKeyChecking=no -i ${FILENAME} ${USERNAME}@docker "docker rm -f my-app || true"'
                     
-                    // 2. Pull the newest image from the registry
-                    sh 'ssh -o StrictHostKeyChecking=no -i ${FILENAME} ${USERNAME}@docker "docker pull my-app:v1"'
+                    // 2. FIX: Pull the FULL image name from ttl.sh
+                    sh 'ssh -o StrictHostKeyChecking=no -i ${FILENAME} ${USERNAME}@docker "docker pull ttl.sh/my-app:v1"'
                     
-                    // 3. Run with the --name flag so we can stop it next time
-                    sh 'ssh -i ${FILENAME} -o StrictHostKeyChecking=no ${USERNAME}@docker "docker pull ttl.sh/my-app:v1 && docker run -d --restart always -p 3000:3000 --name my-app ttl.sh/myapp:v1"'
+                    // 3. FIX: Run using the FULL image name
+                    sh 'ssh -o StrictHostKeyChecking=no -i ${FILENAME} ${USERNAME}@docker "docker run -d --name my-app -p 3000:3000 ttl.sh/my-app:v1"'
                 }
             }
         }
